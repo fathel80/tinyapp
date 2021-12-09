@@ -23,13 +23,13 @@ app.use(
 
 const urlDatabase = {
   "b2xVn2": {
-    // shortURL: 'b2xVn2',
+    //shortURL: 'b2xVn2',
     longURL: "http://www.lighthouselabs.ca",
     userID: 'aJ481W'
   },
 
   "9sm5xK": {
-    // shortURL: '9sm5xK',
+    //shortURL: '9sm5xK',
     longURL: "http://www.google.com",
     userID: 'aJ481W'
   }
@@ -107,7 +107,8 @@ app.get("/urls", (req, res) => {
 app.get('/login', (req, res) => {
   const userID = req.session.user_id;
   let user = getUserById(userDB, userID);
-  const templateVars = {user};
+  const templateVars = {user: user};
+  
 
   res.render('login', templateVars);
 })
@@ -116,11 +117,11 @@ app.get('/register', (req, res) => {
   const userID = req.session.user_id;
   let user = getUserById(userDB, userID);
 
-  // let user = null
-  const templateVars = {user};
+  
+  const templateVars = {user: user};
   res.render('register', templateVars)
 })
-//route to render POST req
+
 app.get("/urls/new", (req, res) => {
   if(!userDB[req.session.user_id]) {
     res.redirect('/login')
@@ -141,10 +142,7 @@ app.get("/urls/:shortURL", (req, res) => {
   console.log('USERid', userID)
   let user = getUserById(userDB, userID);
   console.log("urlDB", urlDatabase)
-  // if(!user[userID]) {
-  //   return res.send('Please <a href="/login">login</a> to view your short url');
-    
-  // }
+  
   if (userID !== urlDatabase[shortURL].userID) {
     return res.send('You can not view this Url')
   }
@@ -169,7 +167,6 @@ app.get("/urls.json", (req, res) => {
 })
 
 
-//route to handle POST req and adding that new data to our database
 app.post("/urls", (req, res) => {
   const userID = req.session.user_id
   const longURL = req.body.longURL
@@ -190,7 +187,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
 })
-//handler for update
 app.post("/urls/:shortURL", (req, res) => {
   if(urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
     return res.send('You can not Update this URL')
