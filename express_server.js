@@ -3,15 +3,9 @@ const express = require("express");
 const app = express();
 const PORT = 3030; // default port 8080
 const bodyParser = require("body-parser");
-// const cookie = require('cookie-parser');
-// const cookieParser = require("cookie-parser");
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
-
-
-
-
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
@@ -48,61 +42,6 @@ const userDB = {
   }
 }
 
-// HELPER FUNCTIONS
-
-const urlsForUser = function(userID) {
-  let usersObject = {};
-  for (const shortURL in urlDatabase) {
-    if(urlDatabase[shortURL].userID === userID) {
-      usersObject[shortURL] = urlDatabase[shortURL]
-    }
-  }
-  return usersObject;
-}
-
-const getUserById = function(userDB, userID) {
-  if (userDB[userID]) {
-    return userDB[userID]
-  } else {
-    return null;
-  }
-}
-
-const createUser = function(email, password, users) {
-  const userID = generateRandomString();
-  users[userID] = {
-    id: userID,
-    email,
-    password
-  };
-  return userID
-}
-
-function generateRandomString() {
-  let result = '';
-  let characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (let i = 0; i < 6; i ++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
-app.get("/", (req, res) => {
-  res.redirect("/login");
-});
-
-app.get("/urls", (req, res) => {
-  if(!userDB[req.session.user_id]) {
-    res.redirect('/login')
-
-  }
-  const userID = req.session.user_id;
-  const templateVars = { 
-    user: getUserById(userDB, userID),
-    urls: urlsForUser(userID)
-  };
-  res.render("urls_index", templateVars)
-})
 
 app.get('/login', (req, res) => {
   const userID = req.session.user_id;
@@ -248,6 +187,62 @@ app.post('/register', (req, res) => {
   req.session.user_id = userID
   res.redirect('/urls')
 })
+// HELPER FUNCTIONS
+
+const urlsForUser = function(userID) {
+  let usersObject = {};
+  for (const shortURL in urlDatabase) {
+    if(urlDatabase[shortURL].userID === userID) {
+      usersObject[shortURL] = urlDatabase[shortURL]
+    }
+  }
+  return usersObject;
+}
+
+const getUserById = function(userDB, userID) {
+  if (userDB[userID]) {
+    return userDB[userID]
+  } else {
+    return null;
+  }
+}
+
+const createUser = function(email, password, users) {
+  const userID = generateRandomString();
+  users[userID] = {
+    id: userID,
+    email,
+    password
+  };
+  return userID
+}
+
+function generateRandomString() {
+  let result = '';
+  let characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for (let i = 0; i < 6; i ++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+app.get("/", (req, res) => {
+  res.redirect("/login");
+});
+
+app.get("/urls", (req, res) => {
+  if(!userDB[req.session.user_id]) {
+    res.redirect('/login')
+
+  }
+  const userID = req.session.user_id;
+  const templateVars = { 
+    user: getUserById(userDB, userID),
+    urls: urlsForUser(userID)
+  };
+  res.render("urls_index", templateVars)
+})
+
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}`);

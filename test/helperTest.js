@@ -1,7 +1,5 @@
 const { assert } = require('chai');
-
 const { getUserByEmail } = require('../helper');
-
 const testUsers = {
   "userRandomID": {
     id: "userRandomID", 
@@ -14,7 +12,6 @@ const testUsers = {
     password: "dishwasher-funk"
   }
 };
-
 describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = getUserByEmail("user@example.com", testUsers)
@@ -23,7 +20,6 @@ describe('getUserByEmail', function() {
     assert.deepEqual(user, expectedOutput)
   });
 });
-
 describe('getUserByEmail', function() {
   it('should return undefined if user email doesnt exist', function() {
     const user = getUserByEmail("weOUT@noemail.com", testUsers);
